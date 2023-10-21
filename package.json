@@ -4,13 +4,13 @@
   "version": "0.0.0",
   "author": "",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "homepage": "https://github.com/thaitype/actions-switch-case",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/thaitype/actions-switch-case.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/thaitype/actions-switch-case/issues"
   },
   "keywords": [
     "actions",
