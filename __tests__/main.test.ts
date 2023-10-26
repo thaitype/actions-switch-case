@@ -19,7 +19,6 @@ const setOutputMock = jest.spyOn(core, 'setOutput')
 const runMock = jest.spyOn(main, 'run')
 
 // Other utilities
-const timeRegex = /^\d{2}:\d{2}:\d{2}/
 
 describe('action', () => {
   beforeEach(() => {
@@ -28,32 +27,29 @@ describe('action', () => {
 
   it('sets the time output', async () => {
     // Set the action's inputs as return values from core.getInput()
+
+    const defaultStr: string = `exec ./bash.sh`
+
+    const conditionals: string = `true => shouldnt be this one
+    false => correctAnswer`
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
-        case 'milliseconds':
-          return '500'
+        case 'default':
+          return defaultStr
+        case 'conditionals-with-values':
+          return conditionals
         default:
-          return ''
+          return defaultStr
       }
     })
 
     await main.run()
     expect(runMock).toHaveReturned()
 
-    // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
-    expect(debugMock).toHaveBeenNthCalledWith(
-      2,
-      expect.stringMatching(timeRegex)
-    )
-    expect(debugMock).toHaveBeenNthCalledWith(
-      3,
-      expect.stringMatching(timeRegex)
-    )
     expect(setOutputMock).toHaveBeenNthCalledWith(
       1,
-      'time',
-      expect.stringMatching(timeRegex)
+      'match',
+      expect.stringMatching('shouldnt be this one')
     )
   })
 
@@ -61,20 +57,21 @@ describe('action', () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
-        case 'milliseconds':
-          return 'this is not a number'
-        default:
+        case 'default':
           return ''
+        case 'conditionals-with-values':
+          return `true => shouldnt be this one`
+        default:
+          return 'hello world.'
       }
     })
-
     await main.run()
     expect(runMock).toHaveReturned()
 
-    // Verify that all of the core library functions were called correctly
+    //   // Verify that all of the core library functions were called correctly
     expect(setFailedMock).toHaveBeenNthCalledWith(
       1,
-      'milliseconds not a number'
+      'No default string provided'
     )
   })
 })
