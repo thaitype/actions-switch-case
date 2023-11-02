@@ -10,7 +10,6 @@ import * as core from '@actions/core'
 import * as main from '../src/main'
 
 // Mock the GitHub Actions core library
-const debugMock = jest.spyOn(core, 'debug')
 const getInputMock = jest.spyOn(core, 'getInput')
 const setFailedMock = jest.spyOn(core, 'setFailed')
 const setOutputMock = jest.spyOn(core, 'setOutput')
@@ -18,18 +17,13 @@ const setOutputMock = jest.spyOn(core, 'setOutput')
 // Mock the action's main function
 const runMock = jest.spyOn(main, 'run')
 
-// Other utilities
-
 describe('action', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   it('sets the time output', async () => {
-    // Set the action's inputs as return values from core.getInput()
-
     const defaultStr: string = `exec ./bash.sh`
-
     const conditionals: string = `true => shouldnt be this one
     false => correctAnswer`
     getInputMock.mockImplementation((name: string): string => {
@@ -44,8 +38,8 @@ describe('action', () => {
     })
 
     await main.run()
-    expect(runMock).toHaveReturned()
 
+    expect(runMock).toHaveReturned()
     expect(setOutputMock).toHaveBeenNthCalledWith(
       1,
       'match',
@@ -54,7 +48,6 @@ describe('action', () => {
   })
 
   it('sets a failed status', async () => {
-    // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
         case 'default':
@@ -68,10 +61,28 @@ describe('action', () => {
     await main.run()
     expect(runMock).toHaveReturned()
 
-    //   // Verify that all of the core library functions were called correctly
     expect(setFailedMock).toHaveBeenNthCalledWith(
       1,
       'No default string provided'
     )
+  })
+
+  it('should return the default status', async () => {
+    const sendingString: string = 'hello default'
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'default':
+          return sendingString
+        case 'conditionals-with-values':
+          return `false => shouldnt be this one`
+        default:
+          return 'hello world.'
+      }
+    })
+    await main.run()
+
+    const expectedResult: string = sendingString
+    expect(runMock).toHaveReturned()
+    expect(setOutputMock).toHaveBeenCalledWith('match', expectedResult)
   })
 })

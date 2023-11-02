@@ -1,65 +1,93 @@
 /**
  * Unit tests for src/selected-condition.ts
  */
-import conditionalSelection from '../src/selected-condition'
+import Selection from '../src/selected-condition'
 import { expect } from '@jest/globals'
 
 describe('selected-condition.ts', () => {
   it('should return correctAnswer', async () => {
-    const con1: string = `false => shouldnt be this one
+    const templateConditions: string = `false => shouldnt be this one
     true => correctAnswer`
-    const result = conditionalSelection(con1)
+    const defaultString = `default`
+    const matcher = new Selection(templateConditions, defaultString)
+    const result = matcher.parseCondition()
     expect(result).toBe('correctAnswer')
-
-    // await expect(wait(input)).rejects.toThrow('milliseconds not a number')
   })
 
   it('should return correctAnswer', async () => {
-    const con2: string = `false => shouldnt be this one
+    const templateConditions: string = `false => shouldnt be this one
     asdasdasd
     asdasdasdasdasdasd
     asdasdasdasdasd
     true => correctAnswer`
-    const result = conditionalSelection(con2)
+    const defaultString = `default`
+    const matcher = new Selection(templateConditions, defaultString)
+    const result = matcher.parseCondition()
     expect(result).toBe('correctAnswer')
   })
 
-  it('should return null', async () => {
-    const con3: string = `false => shouldnt be this one
+  it('should return default', async () => {
+    const templateConditions: string = `false => shouldnt be this one
     false => correctAnswer`
-    const result = conditionalSelection(con3)
-    expect(result).toBe(null)
+    const defaultString = `default`
+    const matcher = new Selection(templateConditions, defaultString)
+    const result = matcher.parseCondition()
+    expect(result).toBe(defaultString)
   })
 
   it('should return multiple lines', async () => {
-    const con4: string = `false => shouldnt be this one
-    true => correctAnswerasdasd
-    asdasdasd
-    ddd asdasd
-    asss`
+    const templateConditions: string = `false => shouldnt be this one
+    true => npm install
+    rm -rf node_modules
+    node index.js
+`
 
-    const expectedResult: string = `correctAnswerasdasd
-    asdasdasd
-    ddd asdasd
-    asss`
+    const expectedResult: string = `npm install
+    rm -rf node_modules
+    node index.js`
 
-    const result = conditionalSelection(con4)
+    const defaultString = `default`
+    const matcher = new Selection(templateConditions, defaultString)
+    const result = matcher.parseCondition()
     expect(result).toBe(expectedResult)
   })
 
   it('should return multiple lines (first true statement)', async () => {
-    const con5: string = `false => shouldnt be this one
-    true => "correctAnswerasdasd
-    asdasdasd
-    ddd asdasd
-    asss"
+    const templateConditions: string = `false => shouldnt be this one
+    true => "print "hello world"
+    cd ..
+    ls -la
+    exit"
     true => "correctAnswerasdasd`
 
-    const expectedResult: string = `"correctAnswerasdasd
-    asdasdasd
-    ddd asdasd
-    asss"`
-    const result = conditionalSelection(con5)
+    const expectedResult: string = `"print "hello world"
+    cd ..
+    ls -la
+    exit"`
+    const defaultString = `default`
+    const matcher = new Selection(templateConditions, defaultString)
+    const result = matcher.parseCondition()
+    expect(result).toBe(expectedResult)
+  })
+  it('should return multiple lines (first true statement without tab or newline)', async () => {
+    const templateConditions: string = `false => shouldnt be this one
+    true => exec echo "hello world"
+    cd -ls
+    exit
+    echo "hello world"
+    true => "falseAnswer"
+    
+    
+    
+    `
+
+    const expectedResult: string = `exec echo "hello world"
+    cd -ls
+    exit
+    echo "hello world"`
+    const defaultString = `default`
+    const matcher = new Selection(templateConditions, defaultString)
+    const result = matcher.parseCondition()
     expect(result).toBe(expectedResult)
   })
 })
