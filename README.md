@@ -1,6 +1,7 @@
 # Switch Case Actions
 
-Status: In developing
+[![Continuous Integration](https://github.com/thaitype/actions-switch-case/actions/workflows/ci.yml/badge.svg)](https://github.com/thaitype/actions-switch-case/actions/workflows/ci.yml)
+![](badges/coverage.svg)
 
 ## Motivation
 
@@ -14,12 +15,12 @@ Example:
 
 ```yml
     - uses: thaitype/actions-switch-case@v1
-    id: switch-case
-    with:
-        default: "its the default"
-        conditionals-with-values: |
-        ${{ 'test' == 'not-test' }} => shouldnt be this one
-        ${{ 'test' == 'still-not-test' }} => shouldnt be this one, too
+      id: switch-case
+      with:
+          default: "its the default"
+          conditionals-with-values: |
+          ${{ 'test' == 'not-test' }} => shouldnt be this one
+          ${{ 'test' == 'still-not-test' }} => shouldnt be this one, too
         
     - run: echo ${{ steps.switch-case.outputs.value }} # its the default
 ```
