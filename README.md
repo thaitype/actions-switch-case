@@ -22,7 +22,7 @@ In this example, we define two conditionals and their associated values using th
 
 ```yaml
 - name: Run switch-case-action
-  uses: thaitype/switch-case-action@v1
+  uses: thaitype/actions-switch-case@v1
   id: switch-case
   with:
     default: "its the default"
@@ -31,7 +31,7 @@ In this example, we define two conditionals and their associated values using th
       ${{ 'test' == 'test' }} => correctAnswer
 
 - name: Echo the result
-  run: echo ${{ steps.switch-case.outputs.value }} # Output: correctAnswer
+  run: echo ${{ steps.switch-case.outputs.match }} # Output: correctAnswer
 ```
 
 In this case, the condition ${{ 'test' == 'test' }} evaluates to true, so correctAnswer is returned.
@@ -41,7 +41,7 @@ If none of the conditions match, you can specify a default value to be returned.
 
 ```yaml
 - name: Run switch-case-action
-  uses: thaitype/switch-case-action@v1
+  uses: thaitype/actions-switch-case@v1
   id: switch-case
   with:
     default: "its the default"
@@ -50,7 +50,7 @@ If none of the conditions match, you can specify a default value to be returned.
       ${{ 'test' == 'still-not-test' }} => shouldnt be this one, too
 
 - name: Echo the result
-  run: echo ${{ steps.switch-case.outputs.value }} # Output: its the default
+  run: echo ${{ steps.switch-case.outputs.match }} # Output: its the default
 ```
 
 In this case, none of the conditions evaluate to true, so the default value "its the default" is returned.
