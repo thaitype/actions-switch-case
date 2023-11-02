@@ -23,8 +23,8 @@ describe('action', () => {
   })
 
   it('sets the time output', async () => {
-    const defaultStr: string = `exec ./bash.sh`
-    const conditionals: string = `true => shouldnt be this one
+    const defaultStr = `exec ./bash.sh`
+    const conditionals = `true => shouldnt be this one
     false => correctAnswer`
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
@@ -68,7 +68,7 @@ describe('action', () => {
   })
 
   it('should return the default status', async () => {
-    const sendingString: string = 'hello default'
+    const sendingString = 'hello default'
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
         case 'default':
@@ -81,7 +81,7 @@ describe('action', () => {
     })
     await main.run()
 
-    const expectedResult: string = sendingString
+    const expectedResult = sendingString
     expect(runMock).toHaveReturned()
     expect(setOutputMock).toHaveBeenCalledWith('match', expectedResult)
   })

@@ -21,13 +21,12 @@ export default class Selection implements ISelection {
 
   private _validate(): void {
     this._extract()
-    const match = this.matchString
     if (!this.defaultString) {
       throw new Error('No default string provided')
     }
   }
 
-  public parseCondition(): string {
+  parseCondition(): string {
     this._validate()
     const returnValue = this.matchString || this.defaultString
     return stripIndent`${returnValue}`
