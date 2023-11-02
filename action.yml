@@ -1,4 +1,4 @@
-name: 'Switch Case'
+name: 'Switch Case Value'
 description: 'Checks conditional switch case. to return the value of true condition or default condition.'
 author: 'Jirayu S. (WRM Software)'
 
