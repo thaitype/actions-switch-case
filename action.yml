@@ -1,17 +1,19 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Switch Case Action'
+description: 'Checks conditional switch case. to return the value of true condition or default condition.'
+author: 'Jirayu S. (WRM Software)'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
+  default:
+    description: The default value to be returned if no conditionals match.
+    required: true
+  conditionals-with-values:
     description: 'Your input description here'
     required: true
-    default: '1000'
 
 # Define your outputs here.
 outputs:
-  time:
+  match:
     description: 'Your output description here'
 
 runs:

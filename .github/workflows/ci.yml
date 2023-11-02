@@ -53,7 +53,10 @@ jobs:
         id: test-action
         uses: ./
         with:
-          milliseconds: 1000
+          default: "Hello World!"
+          conditionals-with-values: \n
+            ${{ false }} => action will not run \n
+            ${{ true }} => echo "true is true" \n
 
       - name: Print Output
         id: output

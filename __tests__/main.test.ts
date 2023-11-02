@@ -10,7 +10,6 @@ import * as core from '@actions/core'
 import * as main from '../src/main'
 
 // Mock the GitHub Actions core library
-const debugMock = jest.spyOn(core, 'debug')
 const getInputMock = jest.spyOn(core, 'getInput')
 const setFailedMock = jest.spyOn(core, 'setFailed')
 const setOutputMock = jest.spyOn(core, 'setOutput')
@@ -18,63 +17,72 @@ const setOutputMock = jest.spyOn(core, 'setOutput')
 // Mock the action's main function
 const runMock = jest.spyOn(main, 'run')
 
-// Other utilities
-const timeRegex = /^\d{2}:\d{2}:\d{2}/
-
 describe('action', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   it('sets the time output', async () => {
-    // Set the action's inputs as return values from core.getInput()
+    const defaultStr = `exec ./bash.sh`
+    const conditionals = `true => shouldnt be this one
+    false => correctAnswer`
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
-        case 'milliseconds':
-          return '500'
+        case 'default':
+          return defaultStr
+        case 'conditionals-with-values':
+          return conditionals
         default:
-          return ''
+          return defaultStr
       }
     })
 
     await main.run()
-    expect(runMock).toHaveReturned()
 
-    // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
-    expect(debugMock).toHaveBeenNthCalledWith(
-      2,
-      expect.stringMatching(timeRegex)
-    )
-    expect(debugMock).toHaveBeenNthCalledWith(
-      3,
-      expect.stringMatching(timeRegex)
-    )
+    expect(runMock).toHaveReturned()
     expect(setOutputMock).toHaveBeenNthCalledWith(
       1,
-      'time',
-      expect.stringMatching(timeRegex)
+      'match',
+      expect.stringMatching('shouldnt be this one')
     )
   })
 
   it('sets a failed status', async () => {
-    // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
-        case 'milliseconds':
-          return 'this is not a number'
-        default:
+        case 'default':
           return ''
+        case 'conditionals-with-values':
+          return `true => shouldnt be this one`
+        default:
+          return 'hello world.'
       }
     })
-
     await main.run()
     expect(runMock).toHaveReturned()
 
-    // Verify that all of the core library functions were called correctly
     expect(setFailedMock).toHaveBeenNthCalledWith(
       1,
-      'milliseconds not a number'
+      'No default string provided'
     )
+  })
+
+  it('should return the default status', async () => {
+    const sendingString = 'hello default'
+    getInputMock.mockImplementation((name: string): string => {
+      switch (name) {
+        case 'default':
+          return sendingString
+        case 'conditionals-with-values':
+          return `false => shouldnt be this one`
+        default:
+          return 'hello world.'
+      }
+    })
+    await main.run()
+
+    const expectedResult = sendingString
+    expect(runMock).toHaveReturned()
+    expect(setOutputMock).toHaveBeenCalledWith('match', expectedResult)
   })
 })
